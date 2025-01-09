@@ -1,5 +1,9 @@
-import { dates } from '/utils/dates.js'
+import { dates } from '/utils/dates.js';
+const { OpenAI } = require("openai");
 
+const openai = new OpenAI({
+    apiKey: CONFIG.OPENAI_KEY
+})
 const tickersArr = []
 
 const generateReportBtn = document.querySelector('.generate-report-btn')
@@ -41,7 +45,7 @@ async function fetchStockData() {
     loadingArea.style.display = 'flex'
     try {
         const stockData = await Promise.all(tickersArr.map(async (ticker) => {
-            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${process.env.POLYGON_API_KEY}`
+            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${CONFIG.POLYGON_API_KEY}`
             const response = await fetch(url)
             const data = await response.text()
             const status = await response.status
