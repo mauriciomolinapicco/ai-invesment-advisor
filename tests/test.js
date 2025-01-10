@@ -54,30 +54,48 @@ async function fetchStockData() {
             }
         }))
         fetchReport(stockData.join(''))
-    } catch(err) {
+    } catch (err) {
         loadingArea.innerText = 'There was an error fetching stock data.'
         console.error('error: ', err)
     }
 }
 
 async function fetchReport(data) {
-    messages = [
+    const messages = [
         {
             role: 'system',
-            content: 'you are a financial advisor. With the data sent by the user you will give financial advice in less than 100 characters about the stocks'
+            content: 'You are a trading guru. Given data on share prices over the past 3 days, write a report of no more than 150 words describing the stocks performance and recommending whether to buy, hold or sell.'
         },
         {
-            role:'user',
+            role: 'user',
             content: data
         }
     ]
-    
-    const response = openai.chat.completions.create({
-        model: 'gpt-4',
-        messages: messages
-    })
-    
-    console.log(response.choices[0].message.content)
+
+    try {
+        const openai = new OpenAI({
+            dangerouslyAllowBrowser: true
+        })
+        const response = await openai.chat.completions.create({
+            mode: 'gpt-4',
+            messages: messages
+        })
+        renderReport(response.choices[0].message.content)
+
+    } catch (err) {
+        console.log('Error:'.err)
+        loadingArea.innerText = 'Unable to access AI. Please refresh and try again'
+    }
+    /** 
+     * Challenge:
+     * 1. Use the OpenAI API to generate a report advising 
+     * on whether to buy or sell the shares based on the data 
+     * that comes in as a parameter.
+     * 
+     * 🎁 See hint.md for help!
+     * 
+     * 🏆 Bonus points: use a try catch to handle errors.
+     * **/
 }
 
 function renderReport(output) {
